@@ -6,3 +6,4 @@ share/
 *.pyc
 *.csv
 .ropeproject
+.idea
