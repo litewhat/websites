@@ -1,5 +1,8 @@
 from django.test import TestCase
-from .models import WebPage, Website, WebsiteCategory
+from django.test import Client
+from django.urls import reverse, resolve
+from sites.models import WebPage, Website
+from categories.models import WebsiteCategory
 
 
 class SavingNewObjectsTestCase(TestCase):
@@ -36,3 +39,36 @@ class SavingNewObjectsTestCase(TestCase):
             'google\'s title does not equals \'Google\''
         )
         self.assertEqual(google.category.name, 'searching')
+
+
+class RoutingUrlsToViewsTestCase(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.views_names = {
+            'list': 'WebsiteListView',
+            'create': 'WebsiteCreateView',
+            'detail': 'WebsiteDetailView',
+        }
+        self.urls = {
+            'list': reverse('sites:list'),
+            'create': reverse('sites:create'),
+            'detail': reverse('sites:detail', kwargs={'pk': 1}),
+        }
+        self.responses = {
+            'list': self.client.get(self.urls['list']),
+            'create': self.client.get(self.urls['create']),
+            'detail': self.client.get(self.urls['detail']),
+        }
+
+    def test_resolving_urls(self):
+        for name, url in self.urls.items():
+            func, args, kwargs = resolve(url)
+            self.assertEqual(func.__name__, self.views_names[name])
+            if kwargs:
+                self.assertEqual(kwargs['pk'], '1')
+
+    def test_responses(self):
+        for name, response in self.responses.items():
+            # TODO
+            pass

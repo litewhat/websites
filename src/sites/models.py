@@ -7,19 +7,14 @@ class Website(models.Model):
     meta_description = models.TextField()
     alexa_rank = models.IntegerField()
     category = models.ForeignKey(
-        'WebsiteCategory',
+        'categories.WebsiteCategory',
         on_delete=models.CASCADE,
     )
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-
-class WebsiteCategory(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    date_added = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-    count = models.PositiveIntegerField()
+    def get_absolute_url(self):
+        return reverse('websites:detail', kwargs={'pk': self.pk})
 
 
 class WebPage(models.Model):
