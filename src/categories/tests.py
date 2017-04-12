@@ -8,7 +8,6 @@ from categories.models import WebsiteCategory
 class SavingNewObjectsTestCase(TestCase):
 
     def setUp(self):
-        # print('Setting up {}...'.format(self.__class__.__name__))
         self.category = WebsiteCategory.objects.create(
             name='searching',
             description='Searching sites.',

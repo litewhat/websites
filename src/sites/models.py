@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Website(models.Model):
@@ -14,7 +15,7 @@ class Website(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def get_absolute_url(self):
-        return reverse('websites:detail', kwargs={'pk': self.pk})
+        return reverse('sites:detail', kwargs={'pk': self.pk})
 
 
 class WebPage(models.Model):

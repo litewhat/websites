@@ -44,6 +44,18 @@ class SavingNewObjectsTestCase(TestCase):
 class RoutingUrlsToViewsTestCase(TestCase):
 
     def setUp(self):
+        self.category = WebsiteCategory.objects.create(
+            name='searching',
+            description='Searching sites.',
+            count=0,
+        )
+        self.website = Website.objects.create(
+            url='www.google.com',
+            title='Google',
+            meta_description='Google searching.',
+            alexa_rank=1,
+            category=self.category,
+        )
         self.client = Client()
         self.views_names = {
             'list': 'WebsiteListView',
@@ -70,5 +82,4 @@ class RoutingUrlsToViewsTestCase(TestCase):
 
     def test_responses(self):
         for name, response in self.responses.items():
-            # TODO
-            pass
+            self.assertEqual(response.status_code, 200, name)

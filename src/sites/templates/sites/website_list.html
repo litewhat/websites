@@ -1,5 +1,27 @@
-{% for obj in object_list %}
-   obj.id </br>
-{% empty %}
-    <h1>No websites yet!</h1>
-{% endfor %}
+<table>
+    <tr>
+        <th><a href="">id</a></th>
+        <th><a href="">url</a></th>
+        <th><a href="">title</a></th>
+        <th><a href="">meta_description</a></th>
+        <th><a href="">alexa_rank</a></th>
+        <th><a href="">category</a></th>
+        <th><a href="">date_added</a></th>
+        <th><a href="">date_updated</a></th>
+        <th>action</th>
+    </tr>
+    {% for obj in object_list %}
+        <tr>
+            <td>{{ obj.id }}</td>
+            <td>{{ obj.url }}</td>
+            <td>{{ obj.title }}</td>
+            <td>{{ obj.meta_description }}</td>
+            <td>{{ obj.alexa_rank }}</td>
+            <td><a href="{% url 'sites:list' %}?category={{ obj.category.name }}">
+                {{ obj.category.name }}</a></td>
+            <td>{{ obj.date_added }}</td>
+            <td>{{ obj.date_updated }}</td>
+            <td><a href="{% url 'sites:detail' obj.id %}">Detail</a></td>
+        </tr>
+    {% endfor %}
+</table>

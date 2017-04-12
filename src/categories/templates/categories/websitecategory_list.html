@@ -1,5 +1,20 @@
-{% for obj in object_list %}
-    obj.id </br>
-{% empty %}
-    <h1>No categories yet!</h1>
-{% endfor %}
+<table>
+    <tr>
+        <th><a href="">id</a></th>
+        <th><a href="">name</a></th>
+        <th><a href="">description</a></th>
+        <th><a href="">date_added</a></th>
+        <th><a href="">date_updated</a></th>
+        <th><a href="">count</a></th>
+    </tr>
+    {% for obj in object_list %}
+        <tr>
+            <td>{{ obj.id }}</td>
+            <td>{{ obj.name }}</td>
+            <td>{{ obj.description }}</td>
+            <td>{{ obj.date_added }}</td>
+            <td>{{ obj.date_updated }}</td>
+            <td>{{ obj.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
