@@ -7,6 +7,14 @@ import urllib.request
 
 
 @shared_task
-def get_file_from_url(url):
+def get_file_from_url(url, filename='tmp.csv.zip'):
     file = urllib.request.URLopener()
-    file.retrieve(url, 'tmp.csv.zip')
+    file.retrieve(url, filename)
+    return filename
+
+
+@shared_task
+def process_zipped_csv_file(filename):
+    print('Processing zipped csv file {}'.format(filename))
+
+

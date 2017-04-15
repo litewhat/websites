@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView
+
 from sites.models import Website
 from sites.tasks import get_file_from_url
 
