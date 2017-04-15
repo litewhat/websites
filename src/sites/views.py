@@ -1,10 +1,9 @@
-from celery import chain
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView
 from sites.models import Website
-from websites.tasks import download_file, process_file
+from sites.tasks import get_file_from_url
 
 website_source = 'http://s3.amazonaws.com/alexa-static/top-1m.csv.zip'
 
@@ -42,8 +41,6 @@ class GetWebsitesView(RedirectView):
     pattern_name = 'sites:list'
 
     def get_redirect_url(self, *args, **kwargs):
-        csv_zip = 'websites.csv.zip'
-        chain(download_file.s(website_source, csv_zip) |
-              process_file.s())()
+        get_file_from_url.delay(website_source)
         return super().get_redirect_url(*args, **kwargs)
 
