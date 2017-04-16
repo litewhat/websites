@@ -1,5 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
+
+import csv
+import json
 import urllib.request
 from zipfile import ZipFile
 
@@ -22,7 +25,12 @@ def process_zipped_csv_file(filename):
 
 @shared_task
 def get_data_from_csv_file(filename):
-    print(filename)
-    # TODO:
+    websites = []
+    with open(filename, newline='') as csvfile:
+        websites_reader = csv.reader(csvfile, delimiter=',')
+        for row in websites_reader:
+            alexa_rank, url = row
+            websites.append((alexa_rank, url))
+    return json.dumps(websites)
 
 

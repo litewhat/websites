@@ -47,6 +47,7 @@ class GetWebsitesView(RedirectView):
         task_queue = chain(
             tasks.get_file_from_url.s(website_source) |
             tasks.process_zipped_csv_file.s() |
+            tasks.get_data_from_csv_file.s() |
             tasks.get_data_from_csv_file.s()
         )
         task_queue()
