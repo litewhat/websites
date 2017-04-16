@@ -26,13 +26,13 @@ class Website(models.Model):
 
 
 class WebPage(models.Model):
-    title = models.CharField(
-        verbose_name='title',
-        max_length=100,
-    )
     url = models.URLField(
         unique=True,
         verbose_name='url',
+    )
+    title = models.CharField(
+        verbose_name='title',
+        max_length=100,
     )
     website = models.ForeignKey(
         'Website',

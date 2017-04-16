@@ -44,7 +44,11 @@ class GetWebsitesView(RedirectView):
     pattern_name = 'sites:list'
 
     def get_redirect_url(self, *args, **kwargs):
-        c = chain(tasks.get_file_from_url.s(website_source) | tasks.process_zipped_csv_file.s())
-        c()
+        task_queue = chain(
+            tasks.get_file_from_url.s(website_source) |
+            tasks.process_zipped_csv_file.s() |
+            tasks.get_data_from_csv_file.s()
+        )
+        task_queue()
         return super().get_redirect_url(*args, **kwargs)
 

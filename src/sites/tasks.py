@@ -1,9 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-
-from django.core import serializers
-
 import urllib.request
+from zipfile import ZipFile
 
 
 @shared_task
@@ -15,6 +13,16 @@ def get_file_from_url(url, filename='tmp.csv.zip'):
 
 @shared_task
 def process_zipped_csv_file(filename):
-    print('Processing zipped csv file {}'.format(filename))
+    # TODO:
+    archive = ZipFile(filename)
+    datafile = archive.infolist()[0]
+    archive.extract(datafile)
+    return datafile.filename
+
+
+@shared_task
+def get_data_from_csv_file(filename):
+    print(filename)
+    # TODO:
 
 
