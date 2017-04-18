@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
+from websites.tools import add_prefix, check_url
 
 import csv
 import json
@@ -27,10 +28,22 @@ def process_zipped_csv_file(filename):
 def get_data_from_csv_file(filename):
     websites = []
     with open(filename, newline='') as csvfile:
-        websites_reader = csv.reader(csvfile, delimiter=',')
+        websites_reader = csv.DictReader(csvfile, fieldnames=['alexa_rank', 'url'], delimiter=',')
         for row in websites_reader:
-            alexa_rank, url = row
-            websites.append((alexa_rank, url))
+            row['url'] = row['url'].lstrip()
+            row['url'] = add_prefix(row['url'])
+            row['url'] = check_url(row['url'])
+            if row['url'] is None:
+                continue
+            websites.append(
+                (row['alexa_rank'],
+                 row['url'])
+            )
     return json.dumps(websites)
+
+
+@shared_task
+def scan_websites(websites):
+    pass
 
 
