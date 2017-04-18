@@ -20,6 +20,7 @@ class Website(models.Model):
         'categories.WebsiteCategory',
         on_delete=models.CASCADE,
         verbose_name='category',
+        null=True,
     )
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

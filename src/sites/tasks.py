@@ -1,6 +1,9 @@
 from __future__ import absolute_import, unicode_literals
+import django
+django.setup()
 from celery import shared_task
-from websites.tools import add_prefix, check_url, get_from_url, get_links_from_html
+from sites.models import Website
+from websites.tools import add_prefix, check_url, get_tag_content_from_html, get_links_from_html
 
 import csv
 import json
@@ -11,7 +14,7 @@ from zipfile import ZipFile
 @shared_task
 def get_file_from_url(url, filename='tmp.csv.zip'):
     file = urllib.request.URLopener()
-    file.retrieve(url, filename
+    file.retrieve(url, filename)
     return filename
 
 
@@ -58,8 +61,22 @@ def scan_websites(websites):
     # TODO: description is 'default'. Have to change it.
     rows = json.loads(websites)
     for row in rows:
-        html = scan_website(row['url'])
-        row['title'] = get_from_url(html, 'title')
-        row['description'] = 'default'
-        hyperlinks = get_links_from_html(html)
+        try:
+            html = scan_website(row['url'])
+            if html is None:
+                continue
+            row['title'] = get_tag_content_from_html(html, 'title')
+            row['meta_description'] = 'default'
+            # hyperlinks = get_links_from_html(html)
 
+            # save row in db
+            website = Website.objects.create(
+                url=row['url'],
+                title=row['title'],
+                meta_description=row['meta_description'],
+                alexa_rank=row['alexa_rank']
+            )
+            website.save()
+        except Exception:
+            pass
+        print('Website saved!')

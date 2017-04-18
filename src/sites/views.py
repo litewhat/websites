@@ -48,7 +48,7 @@ class GetWebsitesView(RedirectView):
             tasks.get_file_from_url.s(website_source) |
             tasks.process_zipped_csv_file.s() |
             tasks.get_data_from_csv_file.s() |
-            tasks.get_data_from_csv_file.s()
+            tasks.scan_websites.s()
         )
         task_queue()
         return super().get_redirect_url(*args, **kwargs)

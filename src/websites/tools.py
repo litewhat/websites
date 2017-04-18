@@ -45,13 +45,16 @@ def get_website_data(html, *args):
     return data
 
 
-def get_tag_from_html(html, tag):
+def get_tag_content_from_html(html, tag):
     soup = BeautifulSoup(html, 'lxml')
-    return soup.find(tag).string
+    tag_content = soup.find(tag)
+    if tag_content is None:
+        return 'default'
+    return tag_content.string
 
 
 def get_links_from_html(html):
-    links = {}
+    links = set()
     soup = BeautifulSoup(html, 'lxml')
     tagged_links = soup.find_all('a')
     _ = { link.get('href') for link in tagged_links }
