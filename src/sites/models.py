@@ -11,7 +11,10 @@ class Website(models.Model):
         verbose_name='title',
         max_length=100,
     )
-    meta_description = models.TextField()
+    meta_description = models.TextField(
+        blank=True,
+        default='',
+    )
     alexa_rank = models.IntegerField()
     category = models.ForeignKey(
         'categories.WebsiteCategory',
@@ -39,6 +42,9 @@ class WebPage(models.Model):
         verbose_name='website',
         on_delete=models.CASCADE
     )
-    meta_description = models.TextField()
+    meta_description = models.TextField(
+        blank=True,
+        default='',
+    )
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

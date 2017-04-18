@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import re
 import urllib.request
 
@@ -11,11 +12,8 @@ regex = re.compile(
 
 
 def get_file_from_url(url):
-    print('Getting file from url: {}'.format(url))
     file = urllib.request.URLopener()
     file.retrieve(url, 'tmp.csv.zip')
-    # debug
-    print('Done.')
 
 
 def check_file_format(filepath):
@@ -35,3 +33,30 @@ def check_url(url):
     return url
 
 
+def cut_get(url):
+    return url.split('?')[0]
+
+
+def get_website_data(html, *args):
+    data = {}
+    soup = BeautifulSoup(html, 'lxml')
+    for arg in args:
+        data[arg] = soup.find(arg)
+    return data
+
+
+def get_tag_from_html(html, tag):
+    soup = BeautifulSoup(html, 'lxml')
+    return soup.find(tag).string
+
+
+def get_links_from_html(html):
+    links = {}
+    soup = BeautifulSoup(html, 'lxml')
+    tagged_links = soup.find_all('a')
+    _ = { link.get('href') for link in tagged_links }
+    for link in _:
+        link = cut_get(link)
+        link = add_prefix(link)
+        links.add(link)
+    return links

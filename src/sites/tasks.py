@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from websites.tools import add_prefix, check_url
+from websites.tools import add_prefix, check_url, get_from_url, get_links_from_html
 
 import csv
 import json
@@ -11,7 +11,7 @@ from zipfile import ZipFile
 @shared_task
 def get_file_from_url(url, filename='tmp.csv.zip'):
     file = urllib.request.URLopener()
-    file.retrieve(url, filename)
+    file.retrieve(url, filename
     return filename
 
 
@@ -26,6 +26,9 @@ def process_zipped_csv_file(filename):
 
 @shared_task
 def get_data_from_csv_file(filename):
+    '''
+    Takes csv file as parameter and returns json file with websites.
+    '''
     websites = []
     with open(filename, newline='') as csvfile:
         websites_reader = csv.DictReader(csvfile, fieldnames=['alexa_rank', 'url'], delimiter=',')
@@ -35,15 +38,28 @@ def get_data_from_csv_file(filename):
             row['url'] = check_url(row['url'])
             if row['url'] is None:
                 continue
-            websites.append(
-                (row['alexa_rank'],
-                 row['url'])
-            )
+            websites.append({
+                'alexa_rank': row['alexa_rank'],
+                'url':        row['url']
+            })
     return json.dumps(websites)
 
 
 @shared_task
-def scan_websites(websites):
-    pass
+def scan_website(url):
+    html_cont = None
+    with urllib.request.urlopen(url) as f:
+        html_cont = f.read()
+    return html_cont
 
+
+@shared_task
+def scan_websites(websites):
+    # TODO: description is 'default'. Have to change it.
+    rows = json.loads(websites)
+    for row in rows:
+        html = scan_website(row['url'])
+        row['title'] = get_from_url(html, 'title')
+        row['description'] = 'default'
+        hyperlinks = get_links_from_html(html)
 
